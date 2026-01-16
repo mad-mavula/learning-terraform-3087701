@@ -13,11 +13,16 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-resource "aws_instance" "web" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"  # Free Tier
 
+resource "aws_instance" "test" {
+  ami           = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2 in us-west-2
+  instance_type = "t3.micro"               # Free Tier
+  
   tags = {
-    Name = "HelloWorld"
+    Test = "FreeTierTest"
   }
+}
+
+output "message" {
+  value = "If this works, Free Tier is active"
 }
