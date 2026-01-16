@@ -1,28 +1,34 @@
-data "aws_ami" "ubuntu" {
+# Find Bitnami Tomcat AMI
+data "aws_ami" "app_ami" {
   most_recent = true
-  owners      = ["099720109477"]  # Canonical's ID
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+    values = ["bitnami-tomcat-*-x86_64-hvm-ebs-nami"]
   }
 
   filter {
     name   = "virtualization-type"
     values = ["hvm"]
   }
+
+  owners = ["979382823631"] # Bitnami
 }
 
+# Use t3.micro - Free Tier eligible
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.app_ami.id
+  instance_type = "t3.micro"  # Free Tier
 
-resource "aws_instance" "test" {
-  ami           = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2 in us-west-2
-  instance_type = "t3.micro"               # Free Tier
-  
   tags = {
-    Test = "FreeTierTest"
+    Name = "BitnamiTomcat-FreeTier"
   }
 }
 
-output "message" {
-  value = "If this works, Free Tier is active"
+output "free_tier_info" {
+  value = "Using t3.micro - Free Tier eligible (750 hours/month free)"
+}
+
+output "bitnami_ami" {
+  value = data.aws_ami.app_ami.id
 }
